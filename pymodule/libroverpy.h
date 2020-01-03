@@ -3,20 +3,22 @@
 
 #include <Python.h>
 
-PyObject * heyman(PyObject *, PyObject *);
-PyObject * add(PyObject *, PyObject *);
-
 PyObject * init(PyObject *);
 PyObject * forward(PyObject *, PyObject *);
 PyObject * backward(PyObject *, PyObject *);
-PyObject * leftsideway(PyObject *, PyObject *);
-PyObject * rightsideway(PyObject *, PyObject *);
-PyObject * diagonal(PyObject *, PyObject *);
-PyObject * concerning(PyObject *, PyObject *);
-PyObject * turnround(PyObject *, PyObject *);
-PyObject * turnfrontaxis(PyObject *, PyObject *);
-PyObject * turnrearaxis(PyObject *, PyObject *);
+PyObject * leftSideway(PyObject *, PyObject *);
+PyObject * rightSideway(PyObject *, PyObject *);
+PyObject * leftDiagonal(PyObject *, PyObject *);
+PyObject * rightDiagonal(PyObject *, PyObject *);
+PyObject * leftConcerning(PyObject *, PyObject *);
+PyObject * rightConcerning(PyObject *, PyObject *);
+PyObject * leftTurnround(PyObject *, PyObject *);
+PyObject * rightTurnround(PyObject *, PyObject *);
+PyObject * leftTurnFrontAxis(PyObject *, PyObject *);
+PyObject * rightTurnFrontAxis(PyObject *, PyObject *);
+PyObject * leftTurnRearAxis(PyObject *, PyObject *);
+PyObject * rightTurnRearAxis(PyObject *, PyObject *);
 PyObject * stop(PyObject *);
-PyObject * poweroff(PyObject *);
+PyObject * powerOff(PyObject *);
 
 #endif

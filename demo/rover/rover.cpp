@@ -1,9 +1,3 @@
-/*
-
-This is the main entry point of Macanum wheel rover application
-
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,118 +7,202 @@ This is the main entry point of Macanum wheel rover application
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
-#include <stdint.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-#include "gpio.h"
-#include "pca9685.h"
-#include "motor.h"
+#include "rover.h"
 
 using namespace BH;
 
-static const uint8_t ENA = 0; // PWM channel 0
-static const uint8_t ENB = 1; // PWM channel 1
-static const uint8_t ENC = 2; // PWM channel 2
-static const uint8_t END = 3; // PWM channel 3
+namespace {
+    static const Motor::MotorMode rover_movement_mode[][4] = {
+        /* FL                                  FR                                   RL                                   RR                                                            */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeForward }, /* forward               */
+        {Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeBackward}, /* backward              */
+        {Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward}, /* left sideway          */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward }, /* right sideway         */
+        {Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop    }, /* left diagonal         */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward }, /* right diagonal        */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop    }, /* left concerning       */
+        {Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward }, /* right concerning      */
+        {Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward }, /* left turnround        */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward}, /* right turnround       */
+        {Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward }, /* left turn front axis  */
+        {Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward}, /* right turn front axis */
+        {Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop    }, /* left turn rear axis   */
+        {Motor::MotorMode::MotorModeForward,  Motor::MotorMode::MotorModeBackward, Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop    }, /* right turn rear axis  */
+        {Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop,     Motor::MotorMode::MotorModeStop    }  /* stop                  */
+    };
 
-static const uint8_t PWM_EN_PIN = RPI_GPIO_4;
-static const uint8_t INT1 = RPI_GPIO_5;
-static const uint8_t INT2 = RPI_GPIO_6;
-static const uint8_t INT3 = RPI_GPIO_12;
-static const uint8_t INT4 = RPI_GPIO_20;
-static const uint8_t INT5 = RPI_GPIO_19;
-static const uint8_t INT6 = RPI_GPIO_13;
-static const uint8_t INT7 = RPI_GPIO_21;
-static const uint8_t INT8 = RPI_GPIO_26;
+    static const uint8_t ENA = 0; // PWM channel 0
+    static const uint8_t ENB = 1; // PWM channel 1
+    static const uint8_t ENC = 2; // PWM channel 2
+    static const uint8_t END = 3; // PWM channel 3
 
-int main(int argc, char**argv)
+    static const uint8_t PWM_EN_PIN = RPI_GPIO_4;
+    static const uint8_t INT1 = RPI_GPIO_5;
+    static const uint8_t INT2 = RPI_GPIO_6;
+    static const uint8_t INT3 = RPI_GPIO_12;
+    static const uint8_t INT4 = RPI_GPIO_20;
+    static const uint8_t INT5 = RPI_GPIO_19;
+    static const uint8_t INT6 = RPI_GPIO_13;
+    static const uint8_t INT7 = RPI_GPIO_21;
+    static const uint8_t INT8 = RPI_GPIO_26;
+}
+
+Rover::Rover()
 {
-    Pin pin1(INT1);  Pin pin2(INT2); // Pin init inside Motor class init()
-    Pin pin3(INT3);  Pin pin4(INT4);
-    Pin pin5(INT5);  Pin pin6(INT6);
-    Pin pin7(INT7);  Pin pin8(INT8);
+}
 
-    Pin pwm_en_pin(PWM_EN_PIN);
-    if (!pwm_en_pin.init()) {
+Rover::~Rover()
+{
+    deinit();
+}
+
+bool Rover::init()
+{
+    pin1 = new Pin(INT1); // Pin init inside Motor class init()  
+    pin2 = new Pin(INT2);
+    pin3 = new Pin(INT3);
+    pin4 = new Pin(INT4);
+    pin5 = new Pin(INT5);
+    pin6 = new Pin(INT6);
+    pin7 = new Pin(INT7);
+    pin8 = new Pin(INT8);
+
+    pwm_en_pin = new Pin(PWM_EN_PIN);
+    if (!pwm_en_pin->init()) {
         printf("Motor PWM Enable pin not set. Are you root\n");
         return 0;
     }
-    pwm_en_pin.setMode(Pin::GpioModeOutput);
-    pwm_en_pin.write(0); /* drive Output Enable low */
+    pwm_en_pin->setMode(Pin::GpioModeOutput);
+    pwm_en_pin->write(0); /* drive Output Enable low */
 
-    PCA9685 pwm;
-    if (!pwm.init()) {
+    pwm = new PCA9685();
+    if (!pwm->init()) {
         printf("Motor PWM init failed. Are you root\n");
         return 0;
     }
  
-    pwm.setFrequency(100);
-    printf("Motor PWM set frequency %f\n", pwm.getFrequency());
+    pwm->setFrequency(100);
+    printf("Motor PWM set frequency %f\n", pwm->getFrequency());
 
-
-    Motor FL(pin1, pin2, pwm, ENA, Motor::MotorRoleFrontLeft);
-    Motor FR(pin3, pin4, pwm, ENB, Motor::MotorRoleFrontRight);
-    Motor RL(pin5, pin6, pwm, ENC, Motor::MotorRoleRearLeft);
-    Motor RR(pin7, pin8, pwm, END, Motor::MotorRoleRearRight);
-
-//    Motor FL(pin1, pin2, pwm, ENA, Motor::MotorRoleFrontLeft);
-//    Motor RR(pin3, pin4, pwm, ENB, Motor::MotorRoleFrontRight);
-//    Motor RL(pin5, pin6, pwm, ENC, Motor::MotorRoleRearLeft);
-//    Motor FR(pin7, pin8, pwm, END, Motor::MotorRoleRearRight);
-
-    FL.init();
-    FR.init();
-    RL.init();
-    RR.init();
-    FL.setSpeed(1500);
-    FR.setSpeed(1500);
-    RL.setSpeed(1500);
-    RR.setSpeed(1500);
-
-//    sleep(1);
-
-    printf("pin1 current value: %d\n", pin1.read());
-    printf("pin2 current value: %d\n", pin2.read());
-    printf("pin3 current value: %d\n", pin3.read());
-    printf("pin4 current value: %d\n", pin4.read());
-    printf("pin5 current value: %d\n", pin5.read());
-    printf("pin6 current value: %d\n", pin6.read());
-    printf("pin7 current value: %d\n", pin7.read());
-    printf("pin8 current value: %d\n", pin8.read());
-
-
-//    FL.setSpeed(1000);
-
-//    FL.forward(); //correct
-//    FR.forward();
-//    RL.forward(); //correct
-//    RR.forward();
-
-
-//    FL.backward();
-//    FR.backward();
-//    RL.backward();
-//    RR.backward();
-
-    FL.forward();
-    FR.forward();
-    RL.forward();
-    RR.forward();
-//    FL.forward();
-
-
-    while(1) {
-      sleep(2);
-      printf("pin1 current value: %d\n", pin1.read());
-      printf("pin2 current value: %d\n", pin2.read());
-      printf("pin3 current value: %d\n", pin3.read());
-      printf("pin4 current value: %d\n", pin4.read());
-      printf("pin5 current value: %d\n", pin5.read());
-      printf("pin6 current value: %d\n", pin6.read());
-      printf("pin7 current value: %d\n", pin7.read());
-      printf("pin8 current value: %d\n", pin8.read());
-    }
+    FL =new Motor(*pin1, *pin2, *pwm, ENA, Motor::MotorRole::MotorRoleFrontLeft);
+    FR =new Motor(*pin3, *pin4, *pwm, ENB, Motor::MotorRole::MotorRoleFrontRight);
+    RL =new Motor(*pin5, *pin6, *pwm, ENC, Motor::MotorRole::MotorRoleRearLeft);
+    RR =new Motor(*pin7, *pin8, *pwm, END, Motor::MotorRole::MotorRoleRearRight);
 
     return 1;
 }
+
+bool Rover::deinit()
+{
+    if(FL != NULL) delete FL;
+    if(FR != NULL) delete FR;
+    if(RL != NULL) delete RL;
+    if(RR != NULL) delete RR;
+    if(pwm != NULL) delete pwm;
+    if(pwm_en_pin != NULL) delete pwm_en_pin;
+    if(pin1 != NULL) delete pin1;
+    if(pin2 != NULL) delete pin2;
+    if(pin3 != NULL) delete pin3;
+    if(pin4 != NULL) delete pin4;
+    if(pin5 != NULL) delete pin5;
+    if(pin6 != NULL) delete pin6;
+    if(pin7 != NULL) delete pin7;
+    if(pin8 != NULL) delete pin8;
+    return 1;
+}
+
+void Rover::_setMode(uint8_t rover_move_mode)
+{
+    if(rover_move_mode < ROVER_MODE_FORWARD || rover_move_mode > ROVER_MODE_STOP) {
+        printf("set Rover movement mode error!");
+    }
+
+    FL->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleFrontLeft]);
+    FR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleFrontRight]);
+    RL->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearLeft]);
+    RR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearRight]);
+}
+
+void Rover::forward()
+{
+    _setMode(ROVER_MODE_FORWARD);
+}
+
+void Rover::backward()
+{
+    _setMode(ROVER_MODE_BACKWARD);
+}
+
+void Rover::leftSideway()
+{
+    _setMode(ROVER_MODE_LEFT_SIDEWAY);
+}
+
+void Rover::rightSideway()
+{
+    _setMode(ROVER_MODE_RIGHT_SIDEWAY);
+}
+
+void Rover::leftDiagonal()
+{
+    _setMode(ROVER_MODE_LEFT_DIAGONAL);
+}
+
+void Rover::rightDiagonal()
+{
+    _setMode(ROVER_MODE_RIGHT_DIAGONAL);
+}
+
+void Rover::leftConcerning()
+{
+    _setMode(ROVER_MODE_LEFT_CONCERNING);
+}
+
+void Rover::rightConcerning()
+{
+    _setMode(ROVER_MODE_RIGHT_CONCERNING);
+}
+
+void Rover::leftTurnround()
+{
+    _setMode(ROVER_MODE_LEFT_TURNROUND);
+}
+
+void Rover::rightTurnround()
+{
+    _setMode(ROVER_MODE_RIGHT_TURNROUND);
+}
+
+void Rover::leftTurnFrontAxis()
+{
+    _setMode(ROVER_MODE_LEFT_TURNFRONTAXIS);
+}
+
+void Rover::rightTurnFrontAxis()
+{
+    _setMode(ROVER_MODE_RIGHT_TURNFRONTAXIS);
+}
+
+void Rover::leftTurnRearAxis()
+{
+    _setMode(ROVER_MODE_LEFT_TURNFREARAXIS);
+}
+
+void Rover::rightTurnRearAxis()
+{
+    _setMode(ROVER_MODE_RIGHT_TURNREARAXIS);
+}
+
+void Rover::stop()
+{
+    _setMode(ROVER_MODE_STOP);
+}
+
+void Rover::powerOff()
+{
+    stop();
+}
+

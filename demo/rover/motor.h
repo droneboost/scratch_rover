@@ -11,16 +11,16 @@ namespace BH {
 class Motor {
 public:
     typedef enum {
-        MotorModeForward,
-        MotorModeBackward,
-        MotorModeStop
+        MotorModeBackward = -1,
+        MotorModeStop     =  0,
+        MotorModeForward  =  1,
     } MotorMode;
 
     typedef enum {
-        MotorRoleFrontLeft,
-        MotorRoleFrontRight,
-        MotorRoleRearLeft,
-        MotorRoleRearRight
+        MotorRoleFrontLeft  = 0,
+        MotorRoleFrontRight = 1,
+        MotorRoleRearLeft   = 2,
+        MotorRoleRearRight  = 3
     } MotorRole;
 
     Motor(Pin& a, Pin& b, PCA9685& pwm, uint8_t pwm_chn, MotorRole role);
@@ -31,7 +31,8 @@ public:
     void    forward();
     void    backward();
     void    stop();
-    void    toggle(); // Forward=>Stop=>Backward or Backward=>Stop=>Forward, do nothing if in Stop Mode
+    void    toggle();
+    void    setMode(MotorMode mode);
     void    setSpeed(uint32_t speed);
 
     MotorMode    mode();

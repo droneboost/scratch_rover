@@ -8,7 +8,7 @@ using namespace BH;
 
 
 namespace {
-    static const uint MOTOR_DEFAULT_SPEED = 800;
+    static const uint MOTOR_DEFAULT_SPEED = 1500;
 }
 
 Motor::Motor(Pin& a, Pin& b, PCA9685& pwm, uint8_t pwm_chn, MotorRole role)
@@ -21,7 +21,7 @@ Motor::Motor(Pin& a, Pin& b, PCA9685& pwm, uint8_t pwm_chn, MotorRole role)
 
 Motor::~Motor()
 {
-
+    _setMode(MotorModeStop);
 }
 
 bool Motor::init()
@@ -62,6 +62,11 @@ void Motor::backward()
 void Motor::stop()
 {
     _setMode(MotorModeStop);
+}
+
+void Motor::setMode(MotorMode mode)
+{
+     _setMode(mode);
 }
 
 void Motor::toggle()

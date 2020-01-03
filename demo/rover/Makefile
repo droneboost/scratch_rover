@@ -5,9 +5,12 @@ INCLUDES = -I ../../driver/include
 
 all: rover
 
-rover: rover.o motor.o pca9685.o gpio.o i2c.o
-	$(CC) rover.o motor.o pca9685.o gpio.o i2c.o -o rover
+rover: main.o rover.o motor.o pca9685.o gpio.o i2c.o
+	$(CC) main.o rover.o motor.o pca9685.o gpio.o i2c.o -o rover
 	rm -rf *.o
+
+main.o: main.cpp
+	$(CC) $(INCLUDES) $(CFLAGS) main.cpp
 
 rover.o: rover.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) rover.cpp
