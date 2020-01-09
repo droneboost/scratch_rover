@@ -1,6 +1,7 @@
 #include "libroverpy.h"
 
 char func_init_docs[]               = "Rover init() function";
+char func_deinit_docs[]             = "Rover deinit() function";
 char func_forward_docs[]            = "Rover forward() function";
 char func_backward_docs[]           = "Rover backward() function";
 char func_leftSideway_docs[]        = "Rover leftSideway() function";
@@ -20,6 +21,7 @@ char func_powerOff_docs[]           = "Rover powerOff() function";
 
 PyMethodDef rover_funcs_table[] = {
 	{"init",               (PyCFunction)init,               METH_NOARGS,  func_init_docs},
+	{"deinit",             (PyCFunction)deinit,             METH_NOARGS,  func_deinit_docs},
 	{"forward",            (PyCFunction)forward,            METH_NOARGS,  func_forward_docs},
 	{"backward",           (PyCFunction)backward,           METH_NOARGS,  func_backward_docs},
 	{"leftSideway",        (PyCFunction)leftSideway,        METH_NOARGS,  func_leftSideway_docs},

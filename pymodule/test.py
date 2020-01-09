@@ -2,8 +2,22 @@
 
 import rover
 
-print(rover.init());
-print(rover.heyman(5, "StarNight"));
-print(rover.add(5, 6));
-#help(helloworld);
+rover.init();
+rover.forward();
+rover.backward();
+rover.leftSideway();
+rover.rightSideway();
+rover.leftDiagonal();
+rover.rightDiagonal();
+rover.leftConcerning();
+rover.rightConcerning();
+rover.leftTurnround();
+rover.rightTurnround();
+rover.leftTurnFrontAxis();
+rover.rightTurnFrontAxis();
+rover.leftTurnRearAxis();
+rover.rightTurnRearAxis();
+rover.stop();
+rover.powerOff();
+#rover.deinit();
 #exit();

@@ -4,6 +4,7 @@
 #include <Python.h>
 
 PyObject * init(PyObject *);
+PyObject * deinit(PyObject *);
 PyObject * forward(PyObject *, PyObject *);
 PyObject * backward(PyObject *, PyObject *);
 PyObject * leftSideway(PyObject *, PyObject *);

@@ -10,19 +10,19 @@ namespace BH {
 namespace {
     static const uint8_t ROVER_MODE_FORWARD             = 0;
     static const uint8_t ROVER_MODE_BACKWARD            = 1;
-    static const uint8_t ROVER_MODE_LEFT_SIDEWAY        = 3;
-    static const uint8_t ROVER_MODE_RIGHT_SIDEWAY       = 4;
-    static const uint8_t ROVER_MODE_LEFT_DIAGONAL       = 5;
-    static const uint8_t ROVER_MODE_RIGHT_DIAGONAL      = 6;
-    static const uint8_t ROVER_MODE_LEFT_CONCERNING     = 7;
-    static const uint8_t ROVER_MODE_RIGHT_CONCERNING    = 8;
-    static const uint8_t ROVER_MODE_LEFT_TURNROUND      = 9;
-    static const uint8_t ROVER_MODE_RIGHT_TURNROUND     = 10;
-    static const uint8_t ROVER_MODE_LEFT_TURNFRONTAXIS  = 11;
-    static const uint8_t ROVER_MODE_RIGHT_TURNFRONTAXIS = 12;
-    static const uint8_t ROVER_MODE_LEFT_TURNFREARAXIS  = 13;
-    static const uint8_t ROVER_MODE_RIGHT_TURNREARAXIS  = 14;
-    static const uint8_t ROVER_MODE_STOP                = 99;
+    static const uint8_t ROVER_MODE_LEFT_SIDEWAY        = 2;
+    static const uint8_t ROVER_MODE_RIGHT_SIDEWAY       = 3;
+    static const uint8_t ROVER_MODE_LEFT_DIAGONAL       = 4;
+    static const uint8_t ROVER_MODE_RIGHT_DIAGONAL      = 5;
+    static const uint8_t ROVER_MODE_LEFT_CONCERNING     = 6;
+    static const uint8_t ROVER_MODE_RIGHT_CONCERNING    = 7;
+    static const uint8_t ROVER_MODE_LEFT_TURNROUND      = 8;
+    static const uint8_t ROVER_MODE_RIGHT_TURNROUND     = 9;
+    static const uint8_t ROVER_MODE_LEFT_TURNFRONTAXIS  = 10;
+    static const uint8_t ROVER_MODE_RIGHT_TURNFRONTAXIS = 11;
+    static const uint8_t ROVER_MODE_LEFT_TURNFREARAXIS  = 12;
+    static const uint8_t ROVER_MODE_RIGHT_TURNREARAXIS  = 13;
+    static const uint8_t ROVER_MODE_STOP                = 14;
 }
 
 class Rover {

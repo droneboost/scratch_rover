@@ -111,6 +111,7 @@ bool Rover::deinit()
     if(pin6 != NULL) delete pin6;
     if(pin7 != NULL) delete pin7;
     if(pin8 != NULL) delete pin8;
+    printf("Rover deinit\n");
     return 1;
 }
 
@@ -129,80 +130,97 @@ void Rover::_setMode(uint8_t rover_move_mode)
 void Rover::forward()
 {
     _setMode(ROVER_MODE_FORWARD);
+    printf("Rover moves forward\n");
 }
 
 void Rover::backward()
 {
     _setMode(ROVER_MODE_BACKWARD);
+    printf("Rover moves backward\n");
 }
 
 void Rover::leftSideway()
 {
     _setMode(ROVER_MODE_LEFT_SIDEWAY);
+    printf("Rover moves leftSideway\n");
 }
 
 void Rover::rightSideway()
 {
     _setMode(ROVER_MODE_RIGHT_SIDEWAY);
+    printf("Rover moves rightSideway\n");
 }
 
 void Rover::leftDiagonal()
 {
     _setMode(ROVER_MODE_LEFT_DIAGONAL);
+    printf("Rover moves leftDiagonal\n");
 }
 
 void Rover::rightDiagonal()
 {
     _setMode(ROVER_MODE_RIGHT_DIAGONAL);
+    printf("Rover moves rightDiagonal\n");
 }
 
 void Rover::leftConcerning()
 {
     _setMode(ROVER_MODE_LEFT_CONCERNING);
+    printf("Rover moves leftConcerning\n");
 }
 
 void Rover::rightConcerning()
 {
     _setMode(ROVER_MODE_RIGHT_CONCERNING);
+    printf("Rover moves rightConcerning\n");
 }
 
 void Rover::leftTurnround()
 {
     _setMode(ROVER_MODE_LEFT_TURNROUND);
+    printf("Rover moves leftTurnround\n");
+
 }
 
 void Rover::rightTurnround()
 {
     _setMode(ROVER_MODE_RIGHT_TURNROUND);
+    printf("Rover moves rightTurnround\n");
 }
 
 void Rover::leftTurnFrontAxis()
 {
     _setMode(ROVER_MODE_LEFT_TURNFRONTAXIS);
+    printf("Rover moves leftTurnFrontAxis\n");
 }
 
 void Rover::rightTurnFrontAxis()
 {
     _setMode(ROVER_MODE_RIGHT_TURNFRONTAXIS);
+    printf("Rover moves rightTurnFrontAxis\n");
 }
 
 void Rover::leftTurnRearAxis()
 {
     _setMode(ROVER_MODE_LEFT_TURNFREARAXIS);
+    printf("Rover moves leftTurnRearAxis\n");
 }
 
 void Rover::rightTurnRearAxis()
 {
     _setMode(ROVER_MODE_RIGHT_TURNREARAXIS);
+    printf("Rover moves rightTurnRearAxis\n");
 }
 
 void Rover::stop()
 {
     _setMode(ROVER_MODE_STOP);
+    printf("Rover stop\n");
 }
 
 void Rover::powerOff()
 {
     stop();
+    printf("Rover powerOff\n");
 }
 
