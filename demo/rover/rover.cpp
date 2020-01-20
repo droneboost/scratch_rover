@@ -76,8 +76,9 @@ bool Rover::init()
         return 0;
     }
     pwm_en_pin->setMode(Pin::GpioModeOutput);
+    printf("pwm_en_pin write(0) start\n");
     pwm_en_pin->write(0); /* drive Output Enable low */
-    printf("pwm_en_pin write(0)\n");
+    printf("pwm_en_pin write(0) finish\n");
 
     pwm = new PCA9685();
     if (!pwm->init()) {
@@ -146,6 +147,10 @@ void Rover::_setMode(uint8_t rover_move_mode)
     FR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleFrontRight]);
     RL->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearLeft]);
     RR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearRight]);
+    FL->setSpeed(1000);
+    FR->setSpeed(1000);
+    RL->setSpeed(1000);
+    RR->setSpeed(1000);
 }
 
 void Rover::forward()
