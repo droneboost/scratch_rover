@@ -33,14 +33,19 @@ bool Motor::init()
         return false;
     }
     _apin.setMode(Pin::GpioModeOutput);
+    printf("Motor %d A Pin write(0) start\n", _role);
     _apin.write(0);
+    printf("Motor %d A Pin write(0) finish\n", _role);
 
     if (!_bpin.init()) {
         printf("Motor %d b Pin init error. Are you root\n", _role);
         return false;
     }
+
     _bpin.setMode(Pin::GpioModeOutput);
+    printf("Motor %d B Pin write(0) start\n", _role);
     _bpin.write(0);
+    printf("Motor %d B Pin write(0) finish\n", _role);
 
     setSpeed(0);
 

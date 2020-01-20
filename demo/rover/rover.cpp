@@ -77,6 +77,7 @@ bool Rover::init()
     }
     pwm_en_pin->setMode(Pin::GpioModeOutput);
     pwm_en_pin->write(0); /* drive Output Enable low */
+    printf("pwm_en_pin write(0)\n");
 
     pwm = new PCA9685();
     if (!pwm->init()) {
@@ -91,6 +92,26 @@ bool Rover::init()
     FR =new Motor(*pin3, *pin4, *pwm, ENB, Motor::MotorRole::MotorRoleFrontRight);
     RL =new Motor(*pin5, *pin6, *pwm, ENC, Motor::MotorRole::MotorRoleRearLeft);
     RR =new Motor(*pin7, *pin8, *pwm, END, Motor::MotorRole::MotorRoleRearRight);
+
+    if(!FL->init()) {
+        printf("Motor FL init failed\n");
+        return 0;
+    }
+
+   if(!FR->init()) {
+        printf("Motor FR init failed\n");
+        return 0;
+    }
+
+   if(!RL->init()) {
+        printf("Motor RL init failed\n");
+        return 0;
+    }
+
+   if(!RR->init()) {
+        printf("Motor RR init failed\n");
+        return 0;
+    }
 
     return 1;
 }

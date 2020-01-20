@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -std=c++11
 LIB = ../../driver/src
 INCLUDES = -I ../../driver/include
 

@@ -53,20 +53,18 @@ Pin::~Pin()
 
 bool Pin::_deinit() 
 {
-#if 0
     if (munmap(const_cast<uint32_t *>(_gpio), BLOCK_SIZE) < 0) {
         warnx("unmap failed");
         return false;
     }
     _gpio = NULL;
-#endif
     return true;
 }
 
 bool Pin::init()
 {
     int mem_fd;
-#if 0
+
     if(_gpio != NULL) return true;
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
@@ -97,35 +95,30 @@ bool Pin::init()
     }
 
     _gpio = reinterpret_cast<volatile uint32_t *>(gpio_map); // Always use volatile pointer!
-#endif
+
     return true;
 }
 
 void Pin::setMode(GpioMode mode)
 {
-#if 0
     if (mode == GpioModeInput) {
         GPIO_MODE_IN(_pin);
     } else {
         GPIO_MODE_IN(_pin);
         GPIO_MODE_OUT(_pin);
     }
-#endif
+
     _mode = mode;
 }
 
 uint8_t Pin::read() const
 {
-#if 0
     uint32_t value = GPIO_GET(_pin);
     return value ? 1: 0;
-#endif
-    return 0;
 }
 
 void Pin::write(uint8_t value)
 {
-#if 0
     if (_mode != GpioModeOutput) {
         warnx("no effect because mode is not set");
     }
@@ -135,7 +128,6 @@ void Pin::write(uint8_t value)
     } else {
         GPIO_SET_HIGH = 1 << _pin;
     }
-#endif
 }
 
 void Pin::toggle()
@@ -151,7 +143,7 @@ int Pin::getRaspberryPiVersion() const
     const char* v2 = "BCM2709";
     char* flag;
     FILE* fd;
-#if 0
+
     fd = fopen("/proc/cpuinfo", "r");
 
     while (fgets(buffer, MAX_SIZE_LINE, fd) != NULL) {
@@ -160,9 +152,11 @@ int Pin::getRaspberryPiVersion() const
         if (flag != NULL) {
             if (strstr(buffer, v2) != NULL) {
                 fclose(fd);
+                printf("Detect RPi version 3\n");
                 return 2;
             } else if (strstr(buffer, v1) != NULL) {
                 fclose(fd);
+                printf("Detect RPi version 2\n");
                 return 1;
             }
         }
@@ -171,6 +165,5 @@ int Pin::getRaspberryPiVersion() const
     /* defaults to 1 */
     fprintf(stderr, "Could not detect RPi version, defaulting to 1\n");
     fclose(fd);
-#endif
     return 1;
 }
