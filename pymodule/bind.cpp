@@ -18,6 +18,13 @@ char func_leftTurnRearAxis_docs[]   = "Rover leftTurnRearAxis() function";
 char func_rightTurnRearAxis_docs[]  = "Rover rightTurnRearAxis() function";
 char func_stop_docs[]               = "Rover stop() function";
 char func_powerOff_docs[]           = "Rover powerOff() function";
+char func_setFrontLeftSpeed_docs[]  = "Rover setFrontLeftSpeed() function";
+char func_setFrontRightSpeed_docs[] = "Rover setFrontRightSpeed() function";
+char func_setRearLeftSpeed_docs[]   = "Rover setRearLeftSpeed() function";
+char func_setRearRightSpeed_docs[]  = "Rover setRearRightSpeed() function";
+char func_setFrontSpeed_docs[]      = "Rover setFrontSpeed() function";
+char func_setRearSpeed_docs[]       = "Rover setRearSpeed() function";
+char func_setSpeed_docs[]           = "Rover setFrontRightSpeed() function";
 
 PyMethodDef rover_funcs_table[] = {
 	{"init",               (PyCFunction)init,               METH_NOARGS,  func_init_docs},
@@ -38,7 +45,14 @@ PyMethodDef rover_funcs_table[] = {
 	{"rightTurnRearAxis",  (PyCFunction)rightTurnRearAxis,  METH_NOARGS,  func_rightTurnRearAxis_docs},
 	{"stop",               (PyCFunction)stop,               METH_NOARGS,  func_stop_docs},
 	{"powerOff",           (PyCFunction)powerOff,           METH_NOARGS,  func_powerOff_docs},
-	{NULL}
+	{"setFrontLeftSpeed",  (PyCFunction)setFrontLeftSpeed,  METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setFrontRightSpeed", (PyCFunction)setFrontRightSpeed, METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setRearLeftSpeed",   (PyCFunction)setRearLeftSpeed,   METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setRearRightSpeed",  (PyCFunction)setRearRightSpeed,  METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setFrontSpeed",      (PyCFunction)setFrontSpeed,      METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setRearSpeed",       (PyCFunction)setRearSpeed,       METH_VARARGS,  func_setFrontLeftSpeed_docs},
+	{"setSpeed",           (PyCFunction)setSpeed,           METH_VARARGS,  func_setFrontLeftSpeed_docs},	
+        {NULL}
 };
 
 char rover_mod_docs[] = "This is a rover module.";

@@ -47,6 +47,13 @@ public:
     void rightTurnRearAxis();
     void stop();
     void powerOff();
+    void setFrontLeftSpeed(uint32_t speed);                           
+    void setFrontRightSpeed(uint32_t speed);
+    void setRearLeftSpeed(uint32_t speed);
+    void setRearRightSpeed(uint32_t speed);
+    void setFrontSpeed(uint32_t speedL, uint32_t speedR);
+    void setRearSpeed(uint32_t speedL, uint32_t speedR);
+    void setSpeed(uint32_t speedFL, uint32_t speedFR, uint32_t speedRL, uint32_t speedRR);
 
 private:
     Pin* pin1;  

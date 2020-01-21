@@ -4,8 +4,10 @@ import time
 import rover
 
 rover.init();
+rover.setFrontLeftSpeed(1000);
 rover.forward();
 time.sleep(5);
+
 #rover.backward();
 #rover.leftSideway();
 #rover.rightSideway();

@@ -147,10 +147,10 @@ void Rover::_setMode(uint8_t rover_move_mode)
     FR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleFrontRight]);
     RL->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearLeft]);
     RR->setMode(rover_movement_mode[rover_move_mode][(uint8_t)Motor::MotorRole::MotorRoleRearRight]);
-    FL->setSpeed(1000);
-    FR->setSpeed(1000);
-    RL->setSpeed(1000);
-    RR->setSpeed(1000);
+//    FL->setSpeed(1000);
+//    FR->setSpeed(1000);
+//    RL->setSpeed(1000);
+//    RR->setSpeed(1000);
 }
 
 void Rover::forward()
@@ -250,3 +250,51 @@ void Rover::powerOff()
     printf("Rover powerOff\n");
 }
 
+void Rover::setFrontLeftSpeed(uint32_t speed)
+{
+    FL->setSpeed(speed);
+    printf("Rover set FL speed %d\n", speed);
+}
+
+void Rover::setFrontRightSpeed(uint32_t speed)
+{
+    FR->setSpeed(speed);
+    printf("Rover set FR speed %d\n", speed);
+}
+
+void Rover::setRearLeftSpeed(uint32_t speed)
+{
+    RL->setSpeed(speed);
+    printf("Rover set RL speed %d\n", speed);
+}
+
+
+void Rover::setRearRightSpeed(uint32_t speed)
+{
+    RR->setSpeed(speed);
+    printf("Rover set FR speed %d\n", speed);
+}
+
+
+void Rover::setFrontSpeed(uint32_t speedL, uint32_t speedR)
+{
+    FL->setSpeed(speedL);
+    FR->setSpeed(speedL);
+    printf("Rover set FL speed %d, FR speed %d\n", speedL, speedR);
+}
+
+
+void Rover::setRearSpeed(uint32_t speedL, uint32_t speedR)
+{
+    RL->setSpeed(speedL);
+    RR->setSpeed(speedR);
+    printf("Rover set RL speed %d, RR speed %d\n", speedL, speedR);
+}
+
+
+void Rover::setSpeed(uint32_t speedFL, uint32_t speedFR, uint32_t speedRL, uint32_t speedRR)
+{
+    setFrontSpeed(speedFL, speedFR);
+    setRearSpeed(speedRL, speedRR);
+    printf("Rover set FL speed %d, FR speed %d, RL speed %d, RR speed %d\n", speedFL, speedFR, speedRL, speedRR);
+}
